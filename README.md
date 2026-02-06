@@ -10,6 +10,7 @@ wget https://github.com/cloudflare/cfrpki/archive/refs/tags/v1.5.10.tar.gz
 wget https://github.com/rpki-client/rpki-client-portable/releases/download/9.6/rpki-client-9.6.tar.gz
 wget https://github.com/NICMx/FORT-validator/releases/download/1.6.7/fort-1.6.7.tar.gz
 wget https://github.com/DynamoRIO/dynamorio/releases/download/cronbuild-11.90.20482/DynamoRIO-Linux-11.90.20482.tar.gz
+wget https://go.dev/dl/go1.25.7.linux-amd64.tar.gz
 cd ..
 ```
 
