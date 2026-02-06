@@ -28,7 +28,7 @@ Initialize the Docker container for the experiment:
 
 **Generating Certificate Repositories with Diverse Structures**
 
-Execute the `./run_parallel_batch.sh` script. All results will be output to the `output` directory.
+Execute the `run_parallel_batch.sh` script. All results will be output to the `output` directory.
 
 
 **Measuring Basic Block Counts during RPKI Validation across Different Structures**
