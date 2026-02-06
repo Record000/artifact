@@ -1,6 +1,22 @@
-# RQ1: How effectively does structure mutation diversify validator execution behaviors and repository structures?
+# README
 
-## 1. Launching the Experimental Environment
+## Launching the Experimental Environment
+
+Download the RPKI validator source packages and the DynamoRIO installation package into the `tmp` directory located at the project root.
+```shell
+mkdir tmp && cd tmp
+wget https://github.com/NLnetLabs/routinator/archive/refs/tags/v0.15.1.tar.gz
+wget https://github.com/cloudflare/cfrpki/archive/refs/tags/v1.5.10.tar.gz
+wget https://github.com/rpki-client/rpki-client-portable/releases/download/9.6/rpki-client-9.6.tar.gz
+wget https://github.com/NICMx/FORT-validator/releases/download/1.6.7/fort-1.6.7.tar.gz
+wget https://github.com/DynamoRIO/dynamorio/releases/download/cronbuild-11.90.20482/DynamoRIO-Linux-11.90.20482.tar.gz
+cd ..
+```
+
+Create the local cache and output directories for the RPKI validators.
+```shell
+mkdir -p rp_cache/{fort_cache,octorpki_cache,routinator_cache,rpki-client_cache,rpki-client_output}
+```
 
 Initialize the Docker container for the experiment:
 
@@ -8,28 +24,13 @@ Initialize the Docker container for the experiment:
 ./docker-run.sh
 ```
 
-## 2. Generating Certificate Repositories with Diverse Structures
+## RQ1 Effectiveness of CFG-guided Mutation
 
-We conducted a total of 5 experimental rounds. In each round, 1,000 certificate repositories were generated using 5 concurrent threads. A timeout of 60 seconds was enforced for the generation of each repository. The tree depth was configured to range from 1 to 100, and the branching factor (width) ranged from 1 to 2. All results were output to the `output` directory.
+**Generating Certificate Repositories with Diverse Structures**
 
-```shell
-./run_parallel_batch.sh --runs 5 --threads 5 --num-repos 1000 --timeout 60 --depth-range 1 100 --branch-range 1 2 
-```
+Execute the `./run_parallel_batch.sh` script. All results will be output to the `output` directory.
 
-## 3. Measuring Basic Block Counts during RPKI Validation across Different Structures
 
-In this step, we generated certificate repositories with varying structures and gathered the basic block counts triggered during the validation process by the RPKI validator.
+**Measuring Basic Block Counts during RPKI Validation across Different Structures**
 
-**Baseline Configuration:**
-We generated 1,000 repository variants using 20 concurrent threads. The parameters were fixed at 100 ROAs, a maximum depth of 1, and a total of 10 CA nodes. The results were exported to the `drcov_output` directory with the filename prefix `baseline`.
-
-```shell
-python3 repo_structure_mutator.py --mode concurrent --roa-count 100 --min-depth 1 --max-depth 1 --min-ca 10 --max-ca 10 --num-variants 1000 --gen-threads 20 --experiment-csv drcov_output/baseline
-```
-
-**Experimental Group:**
-We generated 1,000 repository variants using 20 concurrent threads. While maintaining a total of 100 ROAs, we varied the maximum depth between 1 and 100, and the total number of CA nodes between 1 and 100. The results were exported to the `drcov_output` directory with the filename prefix `100depth_100ca`.
-
-```shell
-python3 repo_structure_mutator.py --mode concurrent --roa-count 100 --min-depth 1 --max-depth 100 --min-ca 1 --max-ca 100 --num-variants 1000 --gen-threads 20 --experiment-csv drcov_output/100depth_100ca
-```
+Run the `repo_structure_mutator.py` script. The results will be exported to the `drcov_output` directory.

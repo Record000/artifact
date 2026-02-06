@@ -9,6 +9,7 @@ my_repo/
 output/
 drcov_output/
 tmp/
+rp_cache/
 experiment.tar.gz
 
 # -----------------------------------------------------------------------------
