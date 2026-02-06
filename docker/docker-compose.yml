@@ -1,0 +1,25 @@
+# =============================================================================
+# Artifact Docker Compose Configuration
+# =============================================================================
+# Usage:
+#   docker-compose run --rm artifact
+#   docker-compose run --rm artifact python3 tools/batch_diversity_generator.py --num-repos 10
+# =============================================================================
+
+version: '3.8'
+
+services:
+  artifact:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: artifact:latest
+    container_name: artifact
+    working_dir: /workspace
+    volumes:
+      # Mount project directory
+      - .:/workspace
+    environment:
+      - DR_ROOT=/opt/dynamorio
+    stdin_open: true
+    tty: true

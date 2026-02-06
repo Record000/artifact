@@ -1,0 +1,62 @@
+# Docker ignore file for Artifact
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Output and cache directories
+batch_output/
+parallel_batch_output/
+drcov_output/
+rp_cache/
+my_repo/
+*.log
+
+# Keep tmp/ directory for RPKI validators and DynamoRIO
+!tmp/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-run.sh
+
+# RP directory (we build validators inside container)
+# RP/
+
+# Keep docker/ directory for patch files
+!docker/
+
+# Keep tools/ directory for DynamoRIO tarball
+!tools/
+
+# Claude
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.orig

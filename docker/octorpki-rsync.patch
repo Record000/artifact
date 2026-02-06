@@ -1,0 +1,60 @@
+--- a/cmd/octorpki/octorpki.go
++++ b/cmd/octorpki/octorpki.go
+@@ -556,11 +556,23 @@ func (s *OctoRPKI) fetchRsync(uri string, span opentracing.Span) {
+ 	log.Infof("Rsync sync %v", uri)
+ 	downloadPath := mustExtractFilePathFromRsyncURL(uri)
+
++	// If URI points to a file (not ending with /), sync its parent directory instead
++	rsyncURI := uri
++	if !strings.HasSuffix(uri, "/") {
++		rsyncURI = syncpki.ExtractRsyncModuleFromURI(uri)
++		if rsyncURI != "" {
++			modulePath := mustExtractFilePathFromRsyncURL(rsyncURI)
++			downloadPath = modulePath
++		} else {
++			rsyncURI = uri
++		}
++	}
++
+ 	path := filepath.Join(*Basepath, downloadPath)
+ 	ctxRsync, cancelRsync := context.WithTimeout(context.Background(), *RsyncTimeout)
+ 	defer cancelRsync()
+
+-	files, err := syncpki.RunRsync(ctxRsync, uri, *RsyncBin, path)
++	files, err := syncpki.RunRsync(ctxRsync, rsyncURI, *RsyncBin, path)
+ 	if err != nil {
+ 		s.rsyncError(uri, path, err, rSpan)
+ 	} else {
+--- a/sync/lib/rsync.go
++++ b/sync/lib/rsync.go
+@@ -44,6 +44,30 @@ func isRsyncURL(url string) bool {
+ 	return strings.HasPrefix(url, RsyncProtoPrefix)
+ }
+
++// ExtractRsyncModuleFromURI extracts the rsync module path from a URI.
++// For a file URI like "rsync://host/module/path/file.cer", it returns "rsync://host/module/".
++// For a directory URI like "rsync://host/module/path/", it returns the original URI.
++// If the URI doesn't contain enough path components, it returns an empty string.
++func ExtractRsyncModuleFromURI(uri string) string {
++	if !isRsyncURL(uri) {
++		return ""
++	}
++
++	// Remove rsync:// prefix
++	pathPart := strings.TrimPrefix(uri, RsyncProtoPrefix)
++
++	// Split by /
++	parts := strings.Split(pathPart, "/")
++
++	// Need at least host + module to extract module (e.g., host/module/file.cer has 3 parts)
++	if len(parts) < 3 {
++		return ""
++	}
++
++	// Return rsync://host/module/
++	return RsyncProtoPrefix + parts[0] + "/" + parts[1] + "/"
++}
++
+ // Determines if file has been deleted
+ func FilterMatch(line string) (string, bool, error) {
+ 	results := reDeletion.FindAllStringSubmatch(line, -1)
