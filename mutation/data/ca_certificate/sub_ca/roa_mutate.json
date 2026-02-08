@@ -1,0 +1,190 @@
+{
+  "content_type": "signed_data",
+  "content": {
+    "version": "v3",
+    "digest_algorithms": [
+      {
+        "algorithm": "sha256",
+        "parameters": null
+      }
+    ],
+    "encap_content_info": {
+      "content_type": "routeOriginAuthz",
+      "content": {
+        "version": 0,
+        "asID": 37328,
+        "ipAddrBlocks": [
+          {
+            "addressFamily": "IPv4",
+            "addresses": [
+              {
+                "address": "192.168.0.0/24",
+                "maxLength": 24
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "certificates": [
+      {
+        "tbs_certificate": {
+          "version": "v3",
+          "serial_number": 2,
+          "signature": {
+            "algorithm": "sha256_rsa",
+            "parameters": null
+          },
+          "issuer": {
+            "common_name": "XqwjDB00gO",
+            "serial_number": "3A7EA6123BB28B99B2ADCD2A59FB63898EE6A265"
+          },
+          "validity": {
+            "not_before": "2025-01-31T07:32:23+00:00",
+            "not_after": "2030-12-31T07:32:23+00:00"
+          },
+          "subject": {
+            "common_name": "testroa"
+          },
+          "subject_public_key_info": {
+            "algorithm": {
+              "algorithm": "rsa",
+              "parameters": null
+            },
+            "public_key": {
+              "modulus": 23171698320037413642567538560065978431301408124277453545885299111817923979129429476549197457423663663777451365180804167596308394256500473540648173680409703748690790393945650377091290652864193191007977598205124456975387350935357849611214718504083695758339499101230761873084657931828193635106239912984039155427642105012862790295959053650317670892905955401578017131887242752318059431924387755712556517510299026339903173964411245683068201977915998422412151078609113223124349505795715840961752644861133957997236616801058165986301323392532202173292918506059713516564334622747279600518700920906173332800694483505614729688699,
+              "public_exponent": 65537
+            }
+          },
+          "issuer_unique_id": null,
+          "subject_unique_id": null,
+          "extensions": [
+            {
+              "extn_id": "key_identifier",
+              "critical": false,
+              "extn_value": "870ac6fb95686ab1d09986ac44dcaeaab4e840d8"
+            },
+            {
+              "extn_id": "authority_key_identifier",
+              "critical": false,
+              "extn_value": {
+                "key_identifier": "7c3fb82b0fb3cdcd2b8fe30ae84def48205a4459",
+                "authority_cert_issuer": null,
+                "authority_cert_serial_number": null
+              }
+            },
+            {
+              "extn_id": "key_usage",
+              "critical": true,
+              "extn_value": [
+                "digital_signature"
+              ]
+            },
+            {
+              "extn_id": "crl_distribution_points",
+              "critical": false,
+              "extn_value": [
+                {
+                  "distribution_point": [
+                    "rsync://localhost:8080/myrpki/9TX4m8v/fraQqY/ynUYMaNI/XqwjDB00gO/revoked.crl"
+                  ],
+                  "reasons": null,
+                  "crl_issuer": null
+                }
+              ]
+            },
+            {
+              "extn_id": "authority_information_access",
+              "critical": false,
+              "extn_value": [
+                {
+                  "access_method": "ca_issuers",
+                  "access_location": "rsync://localhost:8080/myrpki/NkmJ0JW7Du/RAio6Jt5t.cer"
+                }
+              ]
+            },
+            {
+              "extn_id": "certificate_policies",
+              "critical": true,
+              "extn_value": [
+                {
+                  "policy_identifier": "id-cp-ipAddr-asNumber",
+                  "policy_qualifiers": [
+                    {
+                      "policy_qualifier_id": "certification_practice_statement",
+                      "qualifier": "https://rpki.afrinic.net/policy/CPS.pdf"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "extn_id": "subject_information_access",
+              "critical": false,
+              "extn_value": [
+                {
+                  "access_method": "1.3.6.1.5.5.7.48.11",
+                  "access_location": "rsync://localhost:8080/myrpki/9TX4m8v/fraQqY/ynUYMaNI/XqwjDB00gO/test.roa"
+                }
+              ]
+            },
+            {
+              "extn_id": "id-pe-ipAddrBlocks",
+              "critical": true,
+              "extn_value": [
+                {
+                  "addressFamily": "IPv4",
+                  "ipAddressChoice": [
+                    "192.168.2.0/24"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "signature_algorithm": {
+          "algorithm": "sha256_rsa",
+          "parameters": null
+        },
+        "signature_value": "6051819cf2ce724235210b60c93a3fb853a4f618b5a000bc47cecfadd21690ce6a2681c338b4040fdf0545ccbaa3c6685d4cd6c1f2ec59d3c5012a33ec4af1d517e6bcfe7de7d812be98623b93556f0db3de1fc1ff3bb4088440f103fe4d31f2adf8aefb52db6e2a1cbefbd5765bcc2fff418dd1d71ea706f7758c9846ab987809abeb0948b3d926144e9311b68463fabf7d5cb34aaa1b1fb5f01f9e8d18c497cea68dff8afa1c9e01943daabb4dcf9f8678dd1b671cab0dff628d0f6581235182613ba3a16058161dc6f06a48e0027fc8f77ffa825efbb55c86af11b69593619477f02cc3db87a2834af4ed7723ef230e0e039ebc60bee0ab2269911373450f"
+      }
+    ],
+    "crls": null,
+    "signer_infos": [
+      {
+        "version": "v3",
+        "sid": "870ac6fb95686ab1d09986ac44dcaeaab4e840d8",
+        "digest_algorithm": {
+          "algorithm": "sha256",
+          "parameters": null
+        },
+        "signed_attrs": [
+          {
+            "type": "content_type",
+            "values": [
+              "routeOriginAuthz"
+            ]
+          },
+          {
+            "type": "signing_time",
+            "values": [
+              "2025-01-31T07:32:27+00:00"
+            ]
+          },
+          {
+            "type": "message_digest",
+            "values": [
+              "82c53bdcb6ae107ae70cc69e39cf7e76bce804e489d360a34de216f75a5a4fbd"
+            ]
+          }
+        ],
+        "signature_algorithm": {
+          "algorithm": "rsassa_pkcs1v15",
+          "parameters": null
+        },
+        "signature": "13d8d15085189156a7d5b289b76ffbc697018fdbd75e4686d55ef26d3a397ab041814c9d473a1d4ed70ba86bf9226da98dd3976f0d3ac1f4fe569734ce6584c9300afc1686a5fc3bc4e32b2a755b5a5487f4cf55726c15f8d8f5d42ca89a0f63ef1bb31811020685f74e369ccb8904498ba9a022bda26fab7f3e36ce1d56565ff4601c4dcd2d7e91e47b5ce6512ec8e6fd575035b847a6537525f2214a72a1df486b5076f8187b7152f51ae3360e68cfd96cf64dddeb0ab42c5aee623e9aad7ad643cbd59aaf08c1608f24b88a2211282040fed68b7c9af5faf23c3a28690f5d6682d303d6670b04f5a3f2e0795cfa2e8eabb295edb1fcf623004147901331ac",
+        "unsigned_attrs": null
+      }
+    ]
+  }
+}

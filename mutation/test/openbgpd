@@ -1,0 +1,19 @@
+# Generated on host ldz-OMEN-by-HP-Gaming-Laptop-16-wf0xxx at Thu Feb  5 13:51:02 UTC 2026
+# Processing time 0 seconds (0s user, 0s system)
+# CCR manifest hash: 5PYNCqbX89O2pklLHIYbmfZJxvnsUauvIBsg8pcyfJU=
+# CCR validated ROA payloads hash: 5PYNCqbX89O2pklLHIYbmfZJxvnsUauvIBsg8pcyfJU=
+# CCR validated ASPA payloads hash: 5PYNCqbX89O2pklLHIYbmfZJxvnsUauvIBsg8pcyfJU=
+# Route Origin Authorizations: 0 (0 failed parse, 0 invalid)
+# BGPsec Router Certificates: 0
+# Certificates: 1 (1 invalid, 0 non-functional)
+# Trust Anchor Locators: 1 (0 invalid) [ /home/szz/RPKI/REPO/tal/ta.tal ]
+# Manifests: 0 (0 failed parse)
+# Certificate revocation lists: 0
+# Ghostbuster records: 0
+# Repositories: 1
+# VRP Entries: 0 (0 unique)
+roa-set {
+}
+
+aspa-set {
+}

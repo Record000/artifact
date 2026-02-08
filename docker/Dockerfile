@@ -48,10 +48,11 @@ RUN apt-get update && apt-get install -y \
     cargo \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Go 1.25.7 (from tmp/)
-COPY tmp/go1.25.7.linux-amd64.tar.gz /tmp/
-RUN tar -C /usr/local -xzf /tmp/go1.25.7.linux-amd64.tar.gz && \
-    rm /tmp/go1.25.7.linux-amd64.tar.gz && \
+# Install Go (from tmp/, version detected dynamically)
+ARG GO_PKG=go1.25.7.linux-amd64.tar.gz
+COPY tmp/${GO_PKG} /tmp/
+RUN tar -C /usr/local -xzf /tmp/${GO_PKG} && \
+    rm /tmp/${GO_PKG} && \
     ln -sf /usr/local/go/bin/go /usr/local/bin/go && \
     ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
@@ -67,13 +68,14 @@ RUN pip3 install --no-cache-dir \
 # =============================================================================
 # 3. DynamoRIO (for code coverage experiments)
 # =============================================================================
+ARG DYNAMORIO_PKG=DynamoRIO-Linux-11.90.20482.tar.gz
 ENV DR_ROOT=/opt/dynamorio
 
-COPY tmp/DynamoRIO-Linux-11.90.20482.tar.gz /tmp/
+COPY tmp/${DYNAMORIO_PKG} /tmp/
 RUN cd /tmp && \
-    tar xzf DynamoRIO-Linux-11.90.20482.tar.gz && \
-    mv DynamoRIO-Linux-11.90.20482 ${DR_ROOT} && \
-    rm DynamoRIO-Linux-11.90.20482.tar.gz
+    tar xzf ${DYNAMORIO_PKG} && \
+    mv $(tar -tzf ${DYNAMORIO_PKG} | head -1 | cut -f1 -d"/") ${DR_ROOT} && \
+    rm ${DYNAMORIO_PKG}
 
 ENV PATH="${DR_ROOT}/bin64:${PATH}"
 
@@ -81,50 +83,56 @@ ENV PATH="${DR_ROOT}/bin64:${PATH}"
 # 4. RPKI Validators (build from source in tmp/)
 # =============================================================================
 
+# Build arguments for package names (detected dynamically)
+ARG ROUTINATOR_PKG=routinator-0.14.2.tar.gz
+ARG FORT_PKG=fort-1.6.7.tar.gz
+ARG RPKI_CLIENT_PKG=rpki-client-9.6.tar.gz
+ARG CFRPKI_PKG=cfrpki-1.5.10.tar.gz
+
 # Copy all source tarballs from tmp/
-COPY tmp/routinator-0.14.2.tar.gz /tmp/
-COPY tmp/fort-1.6.7.tar.gz /tmp/
-COPY tmp/rpki-client-9.6.tar.gz /tmp/
-COPY tmp/cfrpki-1.5.10.tar.gz /tmp/
+COPY tmp/${ROUTINATOR_PKG} /tmp/
+COPY tmp/${FORT_PKG} /tmp/
+COPY tmp/${RPKI_CLIENT_PKG} /tmp/
+COPY tmp/${CFRPKI_PKG} /tmp/
 
 # Store validators in /opt/rp-validators (outside /workspace to avoid volume mount overlap)
 RUN mkdir -p /opt/rp-validators
 
-# --- Routinator 0.14.2 ---
+# --- Routinator ---
 RUN cd /tmp && \
-    tar xzf routinator-0.14.2.tar.gz && \
-    cd routinator-0.14.2 && \
+    tar xzf ${ROUTINATOR_PKG} && \
+    cd $(tar -tzf ${ROUTINATOR_PKG} | head -1 | cut -f1 -d"/") && \
     cargo build --release && \
     cp target/release/routinator /opt/rp-validators/ && \
-    cd / && rm -rf /tmp/routinator-0.14.2 routinator-0.14.2.tar.gz
+    cd / && rm -rf /tmp/$(tar -tzf ${ROUTINATOR_PKG} | head -1 | cut -f1 -d"/") ${ROUTINATOR_PKG}
 
-# --- FORT Validator 1.6.7 ---
+# --- FORT Validator ---
 RUN cd /tmp && \
-    tar xzf fort-1.6.7.tar.gz && \
-    cd fort-1.6.7 && \
+    tar xzf ${FORT_PKG} && \
+    cd $(tar -tzf ${FORT_PKG} | head -1 | cut -f1 -d"/") && \
     ./configure && \
     make -j$(nproc) && \
     cp src/fort /opt/rp-validators/ && \
-    cd / && rm -rf /tmp/fort-1.6.7 fort-1.6.7.tar.gz
+    cd / && rm -rf /tmp/$(tar -tzf ${FORT_PKG} | head -1 | cut -f1 -d"/") ${FORT_PKG}
 
-# --- rpki-client 9.6 ---
+# --- rpki-client ---
 RUN cd /tmp && \
-    tar xzf rpki-client-9.6.tar.gz && \
-    cd rpki-client-9.6 && \
+    tar xzf ${RPKI_CLIENT_PKG} && \
+    cd $(tar -tzf ${RPKI_CLIENT_PKG} | head -1 | cut -f1 -d"/") && \
     ./configure --with-libtls=libretls && \
     make -j$(nproc) && \
     cp src/rpki-client /opt/rp-validators/ && \
-    cd / && rm -rf /tmp/rpki-client-9.6 rpki-client-9.6.tar.gz
+    cd / && rm -rf /tmp/$(tar -tzf ${RPKI_CLIENT_PKG} | head -1 | cut -f1 -d"/") ${RPKI_CLIENT_PKG}
 
-# --- OctoRPKI v1.5.10 (with patches) ---
+# --- OctoRPKI (with patches) ---
 COPY docker/octorpki-rsync.patch /tmp/octorpki-rsync.patch
 RUN cd /tmp && \
-    tar xzf cfrpki-1.5.10.tar.gz && \
-    cd cfrpki-1.5.10 && \
+    tar xzf ${CFRPKI_PKG} && \
+    cd $(tar -tzf ${CFRPKI_PKG} | head -1 | cut -f1 -d"/") && \
     patch -p1 < /tmp/octorpki-rsync.patch && \
     cd cmd/octorpki && \
     go build -o /opt/rp-validators/octorpki . && \
-    cd / && rm -rf /tmp/cfrpki-1.5.10 /tmp/octorpki-rsync.patch cfrpki-1.5.10.tar.gz
+    cd / && rm -rf /tmp/$(tar -tzf ${CFRPKI_PKG} | head -1 | cut -f1 -d"/") /tmp/octorpki-rsync.patch ${CFRPKI_PKG}
 
 # =============================================================================
 # 5. Entrypoint Script & rsync Service

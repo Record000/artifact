@@ -1,0 +1,58 @@
+{
+	"metadata": {
+		"buildmachine": "ldz-OMEN-by-HP-Gaming-Laptop-16-wf0xxx",
+		"buildtime": "2026-02-02T08:21:16Z",
+		"elapsedtime": 0,
+		"usertime": 0,
+		"systemtime": 0,
+		"ccr_mfts_hash": "5PYNCqbX89O2pklLHIYbmfZJxvnsUauvIBsg8pcyfJU=",
+		"ccr_vrps_hash": "5PYNCqbX89O2pklLHIYbmfZJxvnsUauvIBsg8pcyfJU=",
+		"ccr_vaps_hash": "5PYNCqbX89O2pklLHIYbmfZJxvnsUauvIBsg8pcyfJU=",
+		"ccr_brks_hash": "5PYNCqbX89O2pklLHIYbmfZJxvnsUauvIBsg8pcyfJU=",
+		"ccr_tas_hash": "5PYNCqbX89O2pklLHIYbmfZJxvnsUauvIBsg8pcyfJU=",
+		"roas": 0,
+		"failedroas": 0,
+		"invalidroas": 0,
+		"aspas": 0,
+		"failedaspas": 0,
+		"invalidaspas": 0,
+		"bgpsec_pubkeys": 0,
+		"certificates": 1,
+		"invalidcertificates": 1,
+		"nonfunctionalcas": 0,
+		"taks": 0,
+		"tals": 1,
+		"invalidtals": 0,
+		"talfiles": [
+			"/home/szz/RPKI/REPO/tal/ta.tal"
+		],
+		"manifests": 0,
+		"failedmanifests": 0,
+		"crls": 0,
+		"gbrs": 0,
+		"repositories": 1,
+		"vrps": 0,
+		"uniquevrps": 0,
+		"vsps": 0,
+		"uniquevsps": 0,
+		"vaps": 0,
+		"uniquevaps": 0,
+		"cachedir_new_files": 0,
+		"cachedir_del_files": 0,
+		"cachedir_del_dirs": 0,
+		"cachedir_superfluous_files": 0,
+		"cachedir_del_superfluous_files": 0
+	},
+	"roas": [
+
+	],
+	"bgpsec_keys": [
+
+	],
+	"nonfunc_cas": [
+
+	],
+	"aspas": [
+
+	]
+}

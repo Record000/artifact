@@ -1,0 +1,178 @@
+{
+  "content_type": "signed_data",
+  "content": {
+    "version": "v3",
+    "digest_algorithms": [
+      {
+        "algorithm": "sha256",
+        "parameters": null
+      }
+    ],
+    "encap_content_info": {
+      "content_type": "routeOriginAuthz",
+      "content": {
+        "version": 0,
+        "asID": 65001,
+        "ipAddrBlocks": [
+          {
+            "addressFamily": "IPv4",
+            "addresses": [
+              {
+                "address": "3.21.64.0/24",
+                "maxLength": 24
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "certificates": [
+      {
+        "tbs_certificate": {
+          "version": "v3",
+          "serial_number": 1,
+          "signature": {
+            "algorithm": "sha256_rsa",
+            "parameters": null
+          },
+          "issuer": {
+            "common_name": "sub_ca"
+          },
+          "validity": {
+            "not_before": "2024-11-11T09:06:19+00:00",
+            "not_after": "2025-11-11T09:06:19+00:00"
+          },
+          "subject": {
+            "common_name": "240989241c26bf579fbfb497545ac2d9feb8ba103076966332128edb11dde655"
+          },
+          "subject_public_key_info": {
+            "algorithm": {
+              "algorithm": "rsa",
+              "parameters": null
+            },
+            "public_key": {
+              "modulus": 19468742764637243837491190521608452397338274036308964811370414873131609634251194167333304167433182820937601290555086293329462407347496461218203336737450337938486663420367482364827558435635702400552095663162790759819570949785551997254176815609715140021646943079959984372672800477705174826421415209597441603202102067741399419275042853342106535499214599425944727697405820806099031395086170254485758330281460125669203648926156246056031544148931793189433691706235854379450790482062960484121901135441186471999931002363951313613840296948230365835578181727764129938114166059142927079176304870143308861961636386444945649237951,
+              "public_exponent": 65537
+            }
+          },
+          "issuer_unique_id": null,
+          "subject_unique_id": null,
+          "extensions": [
+            {
+              "extn_id": "key_identifier",
+              "critical": false,
+              "extn_value": "f96f0bab8fb3f27e534ae89835da35d46d31eef6"
+            },
+            {
+              "extn_id": "authority_key_identifier",
+              "critical": false,
+              "extn_value": {
+                "key_identifier": "7a951a035a66fcb69f9ad75ed36221e06c49d8ac",
+                "authority_cert_issuer": null,
+                "authority_cert_serial_number": null
+              }
+            },
+            {
+              "extn_id": "key_usage",
+              "critical": true,
+              "extn_value": [
+                "digital_signature"
+              ]
+            },
+            {
+              "extn_id": "crl_distribution_points",
+              "critical": false,
+              "extn_value": [
+                {
+                  "distribution_point": [
+                    "rsync://localhost:8080/rpki/ca_certificate/sub_ca/revoked.crl"
+                  ],
+                  "reasons": null,
+                  "crl_issuer": null
+                }
+              ]
+            },
+            {
+              "extn_id": "authority_information_access",
+              "critical": false,
+              "extn_value": [
+                {
+                  "access_method": "ca_issuers",
+                  "access_location": "rsync://localhost:8080/rpki/ca_certificate/sub_ca.cer"
+                }
+              ]
+            },
+            {
+              "extn_id": "subject_information_access",
+              "critical": false,
+              "extn_value": [
+                {
+                  "access_method": "1.3.6.1.5.5.7.48.11",
+                  "access_location": "rsync://localhost:8080/ca_certificate/sub_ca/240989241c26bf579fbfb497545ac2d9feb8ba103076966332128edb11dde655.roa"
+                }
+              ]
+            },
+            {
+              "extn_id": "certificate_policies",
+              "critical": true,
+              "extn_value": [
+                {
+                  "policy_identifier": "id-cp-ipAddr-asNumber",
+                  "policy_qualifiers": null
+                }
+              ]
+            },
+            {
+              "extn_id": "id-pe-ipAddrBlocks",
+              "critical": true,
+              "extn_value": [
+                {
+                  "addressFamily": "IPv4",
+                  "ipAddressChoice": [
+                    "3.21.64.0/24"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "signature_algorithm": {
+          "algorithm": "sha256_rsa",
+          "parameters": null
+        },
+        "signature_value": "b5def6c11dc4a4a627e0428afa6257066ab7c986f07173cfbe0b2e1c82f843d66504f3574adb0a9580d592359963fe56cd4d20c2cf0129b1d7bb95f041afddaedf8dd7ad2977c14aea9097f514d6260340135dd239a83fb91f41c82d6863fa9325efe796cc699ff27865c43268c261d796d8b48c0dec21b98ec67fa11bea6b00e32350b20da3d3da688e1ec104554ee20dd7e2226ec1a78c1ae8158309d3b1d6d85bee713944d13d0d38b05b5d8342f22bc58d638e670fa104b9fb611dc61c4a7374f5d94af0570dca4c07089d30702dce03494058032d0e2eb011e313d6867df7c45d20ff655ca5fc620e4cd137d71d084158542edc7877a819f46c890109f1"
+      }
+    ],
+    "crls": null,
+    "signer_infos": [
+      {
+        "version": "v3",
+        "sid": "f96f0bab8fb3f27e534ae89835da35d46d31eef6",
+        "digest_algorithm": {
+          "algorithm": "sha256",
+          "parameters": null
+        },
+        "signed_attrs": [
+          {
+            "type": "content_type",
+            "values": [
+              "routeOriginAuthz"
+            ]
+          },
+          {
+            "type": "message_digest",
+            "values": [
+              "c8d1ae01a1fb90d5337a2d0297959c4ee0baad5920431ad56aaf7a7c59f092e1"
+            ]
+          }
+        ],
+        "signature_algorithm": {
+          "algorithm": "rsassa_pkcs1v15",
+          "parameters": null
+        },
+        "signature": "7991166f124d0ed12f5424bc50dc66020618a4f995c9cf4f08dd7f8d232aaad410e15dc5084469f0a2d17bc45b0a3fa6b561bea81065aaf98d697e0d4c7c5c6f6de1e05319c74975d8da6c889ef7816c8df77aecdff085c7de29bcaf475607e412b2e145f378bc8896f2e023f2eb4111c5381c0fa822441879940c439715b94b37668cfd76570b0575210de6dbfd3025cb0a90c033dccf27f88ea65e9062034b44f8538fe9a85d6052f4e4739efd9a004633484e35cee5a3296621125e7b45a3c476d8c7420291afae7d0a6c04602ca8b81367643176a6d62806033392f8a01bb71db0a913298dc456410a71f65da37d6b74f7f0e76c3723f989acf96931d7cb",
+        "unsigned_attrs": null
+      }
+    ]
+  }
+}
