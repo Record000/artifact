@@ -520,25 +520,25 @@ def build_ta():
     # aki_critical = False
     crl_distribution_points = crlConfig(
         critical=False, 
-        crl_uris=["rsync://localhost:8080/myrpki/ca_certificate/revoked.crl"]
+        crl_uris=["rsync://localhost:8730/myrpki/ca_certificate/revoked.crl"]
     )
     authority_information_access = aiaConfig(
         critical=False, 
-        ca_issuer_uri="rsync://localhost:8080/myrpki/ca_certificate"
+        ca_issuer_uri="rsync://localhost:8730/myrpki/ca_certificate"
     )
     # rrdp_uri="https://rpki.odysseus.uno/rrdp/notification.xml",
-    # ca_uri="rsync://localhost:8080/myrpki/ca_certificate",
-    # mft_uri="rsync://localhost:8080/myrpki/ca_certificate/manifest.mft"
+    # ca_uri="rsync://localhost:8730/myrpki/ca_certificate",
+    # mft_uri="rsync://localhost:8730/myrpki/ca_certificate/manifest.mft"
     subject_information_access = siaConfig(
         critical=False, 
         accessed= [
             {
                 "access_method": "ca_repository",
-                "access_location": "rsync://localhost:8080/myrpki/ca_certificate"
+                "access_location": "rsync://localhost:8730/myrpki/ca_certificate"
             },
             {
                 "access_method": "id-ad-rpkiManifest",
-                "access_location": "rsync://localhost:8080/myrpki/ca_certificate/manifest.mft"
+                "access_location": "rsync://localhost:8730/myrpki/ca_certificate/manifest.mft"
             }
             # {
             #     "access_method": "id-ad-rpkiNotify",
@@ -607,7 +607,7 @@ def build_ta():
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
     # # Log.info(public_key_info_der)
-    tal_contents = f"rsync://localhost:8080/myrpki/ca_certificate.cer\n\n".encode()
+    tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
     tal_contents += base64.b64encode(public_key_info_der)
 
     if os.path.exists("./my_repo/tal") is False:
@@ -689,7 +689,7 @@ def build_ta_from_json(file_path):
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
     # # Log.info(public_key_info_der)
-    tal_contents = f"rsync://localhost:8080/myrpki/ca_certificate.cer\n\n".encode()
+    tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
     tal_contents += base64.b64encode(public_key_info_der)
 
     if os.path.exists("./my_repo/tal") is False:
@@ -731,22 +731,22 @@ def build_subca():
     # aki_critical = False
     crl_distribution_points = crlConfig(
         critical=False, 
-        crl_uris=["rsync://localhost:8080/myrpki/ca_certificate/revoked.crl"]
+        crl_uris=["rsync://localhost:8730/myrpki/ca_certificate/revoked.crl"]
     )
     authority_information_access = aiaConfig(
         critical=False, 
-        ca_issuer_uri="rsync://localhost:8080/myrpki/ca_certificate.cer"
+        ca_issuer_uri="rsync://localhost:8730/myrpki/ca_certificate.cer"
     )
     subject_information_access = siaConfig(
         critical=False, 
         accessed= [
             {
                 "access_method": "ca_repository",
-                "access_location": "rsync://localhost:8080/myrpki/ca_certificate/sub_ca"
+                "access_location": "rsync://localhost:8730/myrpki/ca_certificate/sub_ca"
             },
             {
                 "access_method": "id-ad-rpkiManifest",
-                "access_location": "rsync://localhost:8080/myrpki/ca_certificate/sub_ca/manifest.mft"
+                "access_location": "rsync://localhost:8730/myrpki/ca_certificate/sub_ca/manifest.mft"
             }
         ]
     )
@@ -816,7 +816,7 @@ def build_tal(ca_path, export_path):
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
     # # Log.info(public_key_info_der)
-    tal_contents = f"rsync://localhost:8080/myrpki/ca_certificate.cer\n\n".encode()
+    tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
     tal_contents += base64.b64encode(public_key_info_der)
 
     if os.path.exists("./my_repo/tal") is False:
@@ -827,7 +827,7 @@ def build_tal(ca_path, export_path):
 
 
 def build_rrdp(session_id="f2eb4f5d-e085-4edb-8030-f42f38424a9f", serial="2", root_dir="./my_repo/",
-               root_https_url="https://rpki.odysseus.uno/rrdp/", rsync_root_uri="rsync://localhost:8080/myrpki/", 
+               root_https_url="https://rpki.odysseus.uno/rrdp/", rsync_root_uri="rsync://localhost:8730/myrpki/", 
                target_dir="./my_repo/rrdp/"):
     notification = NotificationXml(str(session_id), serial)
     snapshot_target_dir = target_dir + str(session_id) + "/" + str(serial)
@@ -875,18 +875,56 @@ def build_rrdp(session_id="f2eb4f5d-e085-4edb-8030-f42f38424a9f", serial="2", ro
 import secrets
 import string
 import random
-def export_tal(ca_cert_path, tal_export_path):
-    with open(ca_cert_path, "rb") as cert_file:
-        cert_data = cert_file.read()
-        cert = x509.load_der_x509_certificate(cert_data, default_backend())
+def export_tal(ca_cert_path, tal_export_path, private_key_path=None):
+    """
+    Export TAL file from CA certificate.
+    Tries to extract public key from certificate, falls back to private key if cert parsing fails.
+    """
+    tal_contents = None
 
-    public_key_info_der = cert.public_key().public_bytes(
-        encoding=serialization.Encoding.DER,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
-    )
+    # Try to extract from certificate first
+    try:
+        with open(ca_cert_path, "rb") as cert_file:
+            cert_data = cert_file.read()
+            cert = x509.load_der_x509_certificate(cert_data, default_backend())
 
-    tal_contents = f"rsync://localhost:8080/myrpki/ca_certificate.cer\n\n".encode()
-    tal_contents += base64.b64encode(public_key_info_der)
+        public_key_info_der = cert.public_key().public_bytes(
+            encoding=serialization.Encoding.DER,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+
+        tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
+        tal_contents += base64.b64encode(public_key_info_der)
+    except Exception as e:
+        # If certificate parsing fails due to mutations, try extracting from private key
+        if private_key_path and os.path.exists(private_key_path):
+            try:
+                with open(private_key_path, "rb") as key_file:
+                    private_key = serialization.load_pem_private_key(
+                        key_file.read(), None, default_backend()
+                    )
+
+                public_key_info_der = private_key.public_key().public_bytes(
+                    encoding=serialization.Encoding.DER,
+                    format=serialization.PublicFormat.SubjectPublicKeyInfo
+                )
+
+                tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
+                tal_contents += base64.b64encode(public_key_info_der)
+            except Exception as e2:
+                import warnings
+                warnings.warn(f"Failed to extract public key from both cert ({e}) and private key ({e2}). Creating dummy TAL.")
+                # Create a minimal dummy TAL with placeholder public key
+                dummy_key = b"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA"  # Dummy RSA public key prefix
+                tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
+                tal_contents += dummy_key
+        else:
+            # No private key available, create dummy TAL
+            import warnings
+            warnings.warn(f"Failed to parse certificate for TAL export: {e}. No private key provided. Creating dummy TAL.")
+            dummy_key = b"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA"
+            tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
+            tal_contents += dummy_key
 
     tal_dir = os.path.dirname(tal_export_path)
     if not os.path.exists(tal_dir):
@@ -994,7 +1032,7 @@ def build_topology(depth, branching_factor, ta_template, sub_template, mft_templ
             parent.name if parent else node.name
         )
 
-        parent_uri = parent.uri if parent else "rsync://localhost:8080/myrpki"
+        parent_uri = parent.uri if parent else "rsync://localhost:8730/myrpki"
         node.uri = parent_uri if not parent else f"{parent_uri}/{node.name}"
 
         for ext in data["tbs_certificate"]["extensions"]:
@@ -1140,6 +1178,10 @@ def generate_repository_task(repo_id, tree_depth, branching_factor, base_root, t
     os.makedirs(os.path.join(repo_dir, "key"), exist_ok=True)
     os.makedirs(os.path.join(repo_dir, "tal"), exist_ok=True)
 
+    # Create directories for EE certificates (MFT/ROA) - required by rpki/mft/mft.py
+    os.makedirs("./my_repo/key", exist_ok=True)
+    os.makedirs("./my_repo/ca_certificate", exist_ok=True)
+
     repo_metrics = {"t_mut": 0.0, "t_rep": 0.0, "t_resin": 0.0, "t_io": 0.0}
 
     def update_metrics(m):
@@ -1174,7 +1216,8 @@ def generate_repository_task(repo_id, tree_depth, branching_factor, base_root, t
         ca_cfg_obj = certParser(json_data=node_cfg_json).parser_cacert()
         update_metrics(build_ca(parent_priv, node.cert_path, ca_cfg_obj, node.priv_key_path, (level == 0)))
 
-        if level == 0: export_tal(node.cert_path, os.path.join(repo_dir, "tal/ta.tal"))
+        if level == 0:
+            export_tal(node.cert_path, os.path.join(repo_dir, "tal/ta.tal"), node.priv_key_path)
 
         if level < tree_depth - 1:
             for _ in range(branching_factor):
@@ -1213,12 +1256,12 @@ if __name__ == "__main__":
     REPOS_PER_RUN = 64 
     DEPTH, BRANCH = 2, 1 
 
-    BASE_ROOT = "/tmp/rpki_repo"
+    BASE_ROOT = "./mutation/out"
     TEMPLATES_PATHS = {
-        "ta": "./mutation/data/data/ca_certificate_mutate.json",
-        "sub": "./mutation/data/data/ca_certificate/sub_ca_mutate.json",
-        "mft": "./mutation/data/data/ca_certificate/manifest.json",
-        "roa": "./mutation/data/data/ca_certificate/sub_ca/roa_mutate.json",
+        "ta": "./mutation/data/ca_certificate_mutate.json",
+        "sub": "./mutation/data/ca_certificate/sub_ca_mutate.json",
+        "mft": "./mutation/data/ca_certificate/manifest.json",
+        "roa": "./mutation/data/ca_certificate/roa_mutate.json",
     }
     cached_templates = load_all_templates(TEMPLATES_PATHS)
     final_results = {}

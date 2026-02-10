@@ -501,25 +501,25 @@ def build_ta():
     # aki_critical = False
     crl_distribution_points = crlConfig(
         critical=False, 
-        crl_uris=["rsync://localhost:8080/myrpki/ca_certificate/revoked.crl"]
+        crl_uris=["rsync://localhost:8730/myrpki/ca_certificate/revoked.crl"]
     )
     authority_information_access = aiaConfig(
         critical=False, 
-        ca_issuer_uri="rsync://localhost:8080/myrpki/ca_certificate"
+        ca_issuer_uri="rsync://localhost:8730/myrpki/ca_certificate"
     )
     # rrdp_uri="https://rpki.odysseus.uno/rrdp/notification.xml",
-    # ca_uri="rsync://localhost:8080/myrpki/ca_certificate",
-    # mft_uri="rsync://localhost:8080/myrpki/ca_certificate/manifest.mft"
+    # ca_uri="rsync://localhost:8730/myrpki/ca_certificate",
+    # mft_uri="rsync://localhost:8730/myrpki/ca_certificate/manifest.mft"
     subject_information_access = siaConfig(
         critical=False, 
         accessed= [
             {
                 "access_method": "ca_repository",
-                "access_location": "rsync://localhost:8080/myrpki/ca_certificate"
+                "access_location": "rsync://localhost:8730/myrpki/ca_certificate"
             },
             {
                 "access_method": "id-ad-rpkiManifest",
-                "access_location": "rsync://localhost:8080/myrpki/ca_certificate/manifest.mft"
+                "access_location": "rsync://localhost:8730/myrpki/ca_certificate/manifest.mft"
             }
             # {
             #     "access_method": "id-ad-rpkiNotify",
@@ -588,7 +588,7 @@ def build_ta():
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
     # Log.info(public_key_info_der)
-    tal_contents = f"rsync://localhost:8080/myrpki/ca_certificate.cer\n\n".encode()
+    tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
     tal_contents += base64.b64encode(public_key_info_der)
 
     if os.path.exists("./my_repo/tal") is False:
@@ -670,7 +670,7 @@ def build_ta_from_json(file_path):
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
     # Log.info(public_key_info_der)
-    tal_contents = f"rsync://localhost:8080/myrpki/ca_certificate.cer\n\n".encode()
+    tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
     tal_contents += base64.b64encode(public_key_info_der)
 
     if os.path.exists("./my_repo/tal") is False:
@@ -712,22 +712,22 @@ def build_subca():
     # aki_critical = False
     crl_distribution_points = crlConfig(
         critical=False, 
-        crl_uris=["rsync://localhost:8080/myrpki/ca_certificate/revoked.crl"]
+        crl_uris=["rsync://localhost:8730/myrpki/ca_certificate/revoked.crl"]
     )
     authority_information_access = aiaConfig(
         critical=False, 
-        ca_issuer_uri="rsync://localhost:8080/myrpki/ca_certificate.cer"
+        ca_issuer_uri="rsync://localhost:8730/myrpki/ca_certificate.cer"
     )
     subject_information_access = siaConfig(
         critical=False, 
         accessed= [
             {
                 "access_method": "ca_repository",
-                "access_location": "rsync://localhost:8080/myrpki/ca_certificate/sub_ca"
+                "access_location": "rsync://localhost:8730/myrpki/ca_certificate/sub_ca"
             },
             {
                 "access_method": "id-ad-rpkiManifest",
-                "access_location": "rsync://localhost:8080/myrpki/ca_certificate/sub_ca/manifest.mft"
+                "access_location": "rsync://localhost:8730/myrpki/ca_certificate/sub_ca/manifest.mft"
             }
         ]
     )
@@ -797,7 +797,7 @@ def build_tal(ca_path, export_path):
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
     # Log.info(public_key_info_der)
-    tal_contents = f"rsync://localhost:8080/myrpki/ca_certificate.cer\n\n".encode()
+    tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
     tal_contents += base64.b64encode(public_key_info_der)
 
     if os.path.exists("./my_repo/tal") is False:
@@ -908,7 +908,7 @@ def build_roa(issuer_private_key_path, roa_config, roa_path):
     roa.export_cms(file_path=roa_path)
 
 def build_rrdp(session_id="f2eb4f5d-e085-4edb-8030-f42f38424a9f", serial="2", root_dir="./my_repo/",
-               root_https_url="https://rpki.odysseus.uno/rrdp/", rsync_root_uri="rsync://localhost:8080/myrpki/", 
+               root_https_url="https://rpki.odysseus.uno/rrdp/", rsync_root_uri="rsync://localhost:8730/myrpki/", 
                target_dir="./my_repo/rrdp/"):
     notification = NotificationXml(str(session_id), serial)
     snapshot_target_dir = target_dir + str(session_id) + "/" + str(serial)
@@ -968,7 +968,7 @@ def export_tal(ca_cert_path, tal_export_path):
         spki = cert['tbsCertificate']['subjectPublicKeyInfo']
         public_key_info_der = encoder.encode(spki)
 
-        tal_contents = f"rsync://localhost:8080/myrpki/ca_certificate.cer\n\n".encode()
+        tal_contents = f"rsync://localhost:8730/myrpki/ca_certificate.cer\n\n".encode()
         tal_contents += base64.b64encode(public_key_info_der)
 
         tal_dir = os.path.dirname(tal_export_path)
@@ -1053,7 +1053,7 @@ def build_topology(depth, branching_factor, ta_template, sub_template, mft_templ
             parent_node.name if parent_node else node.name
         )
 
-        parent_uri = parent_node.uri if parent_node else "rsync://localhost:8080/myrpki"
+        parent_uri = parent_node.uri if parent_node else "rsync://localhost:8730/myrpki"
         node.uri = f"{parent_uri}/{node.name}" if parent_node else f"{parent_uri}"
 
         for ext in data["tbs_certificate"]["extensions"]:
@@ -1121,8 +1121,8 @@ if __name__ == '__main__':
 
     TREE_DEPTH = 2           # TA -> SubL1 -> SubL2
     BRANCH_FACTOR = 1        # 
-    BASE_REPO = "./my_repo/"
-    TMP_CONFIG_DIR = "./mutation/data/data/tmp_configs/"
+    BASE_REPO = "./mutation/out/my_repo/"
+    TMP_CONFIG_DIR = "./mutation/out/tmp_configs/"
     
     os.system(f"rm -rf {BASE_REPO} ../local_repo ../FORT_LOCAL {TMP_CONFIG_DIR}")
     os.makedirs(os.path.join(BASE_REPO, "ca_certificate"), exist_ok=True)
@@ -1133,10 +1133,10 @@ if __name__ == '__main__':
     all_nodes, root_node = build_topology(
         depth=TREE_DEPTH,
         branching_factor=BRANCH_FACTOR,
-        ta_template="./mutation/data/data/ca_certificate_mutate.json",
-        sub_template="./mutation/data/data/ca_certificate/sub_ca_mutate.json",
-        mft_template="./mutation/data/data/ca_certificate/manifest.json",
-        roa_template="./mutation/data/data/ca_certificate/sub_ca/roa_mutate.json",
+        ta_template="./mutation/data/ca_certificate_mutate.json",
+        sub_template="./mutation/data/ca_certificate/sub_ca_mutate.json",
+        mft_template="./mutation/data/ca_certificate/manifest.json",
+        roa_template="./mutation/data/ca_certificate/roa_mutate.json",
         tmp_dir=TMP_CONFIG_DIR
     )
 
@@ -1166,6 +1166,11 @@ if __name__ == '__main__':
                  config=ca_config, key_export_path=node.priv_key_path, is_ta=is_ta)
 
     Log.info("[Phase 2] Building Signed Objects...")
+
+    # Create directories for EE certificates (MFT/ROA)
+    os.makedirs("./my_repo/key", exist_ok=True)
+    os.makedirs("./my_repo/ca_certificate", exist_ok=True)
+
     for node in all_nodes:
         
         if node.level == 0:
@@ -1204,11 +1209,11 @@ if __name__ == '__main__':
         mft_config.ee_config = eeCertParser(json_data=mft_ee_data).parse_eecert()
         build_mft(issuer_private_key_path=node.priv_key_path, mft_config=mft_config, mft_path=mft_path)
 
-    cache_base = "./my_repo/rsync/localhost/8080/myrpki"
+    cache_base = "./my_repo/rsync/localhost/8730/myrpki"
     os.makedirs(cache_base, exist_ok=True)
     
     for item in os.listdir(BASE_REPO):
-        if item in ["key", "tal", "ca_certificate"]: continue
+        if item in ["key", "ca_certificate"]: continue  # Don't skip "tal" - we need it
         src = os.path.join(BASE_REPO, item)
         dst = os.path.join(cache_base, item)
         if os.path.isdir(src): shutil.copytree(src, dst, dirs_exist_ok=True)
@@ -1217,23 +1222,61 @@ if __name__ == '__main__':
     shutil.copy2(root_node.cert_path, cache_base)
 
     Log.success("\n" + "="*20 + " RUNNING Routinator " + "="*20)
+    print("=== VALIDATOR_START: Routinator ===", flush=True)
 
-    routinator_cmd = "RP/routinator --allow-dubious-hosts --repository-dir ./my_repo/my_repo/tal --fresh --strict --disable-rrdp --unsafe-vrps reject --stale reject -vvv vrps"
+    routinator_cmd = "./RP/instruct/routinator --allow-dubious-hosts --repository-dir ./my_repo/rsync/localhost/8730/myrpki --fresh --strict --disable-rrdp --unsafe-vrps reject --stale reject -vvv vrps"
     os.system(f"{routinator_cmd} 2>&1")
+    sys.stdout.flush()
+    sys.stderr.flush()
     
-    Log.success("\n" + "="*20 + " RUNNING Fort  " + "="*20)
+    # Clear Fort cache
+    fort_cache = "./my_repo/fort_cache"
+    if os.path.exists(fort_cache):
+        shutil.rmtree(fort_cache, ignore_errors=True)
+    Log.info(f"Cleared Fort cache: {fort_cache}")
 
-    fort_cmd = "RP/fort --mode=standalone --tal=./my_repo/tal --local-repository=./my_repo
+    Log.success("\n" + "="*20 + " RUNNING Fort  " + "="*20)
+    print("=== VALIDATOR_START: Fort ===", flush=True)
+
+    fort_cmd = "./RP/instruct/fort --mode=standalone --tal=./mutation/out/my_repo/tal --local-repository=./my_repo/fort_cache --http.enabled=false --maximum-certificate-depth=102 --log.enabled=true --log.level=debug"
     os.system(f"{fort_cmd} 2>&1")
+    sys.stdout.flush()
+    sys.stderr.flush()
+
+    # Clear Octorpki cache
+    octorpki_cache = "./my_repo/octorpki_cache"
+    if os.path.exists(octorpki_cache):
+        shutil.rmtree(octorpki_cache, ignore_errors=True)
+    Log.info(f"Cleared Octorpki cache: {octorpki_cache}")
 
     Log.success("\n" + "="*20 + " RUNNING Octorpki  " + "="*20)
-    octo_cmd = "RP/octorpki -mode oneoff -tal.root './my_repo/tal/ta.tal' -tal.name 'rfuzz_root' -cache '../local_repo/rsync' -output.roa './test/octorpki_output.json' -output.sign=false -rrdp=false -loglevel warning"
+    print("=== VALIDATOR_START: Octorpki ===", flush=True)
+
+    octo_cmd = "./RP/instruct/octorpki -mode oneoff -tal.root './mutation/out/my_repo/tal/ta.tal' -tal.name 'rfuzz_root' -cache './my_repo/octorpki_cache' -output.roa './my_repo/octorpki_output.json' -output.sign=false -rrdp=false -loglevel debug"
     os.system(octo_cmd)
-    if os.path.exists("test/octorpki_output.json"):
-        with open("test/octorpki_output.json", 'r') as f:
+    if os.path.exists("my_repo/octorpki_output.json"):
+        with open("my_repo/octorpki_output.json", 'r') as f:
             data = json.load(f)
             Log.info(data)
+    sys.stdout.flush()
+    sys.stderr.flush()
           
+    # Clear RPKI Client cache
+    rpki_client_cache = "./my_repo/rsync"
+    if os.path.exists(rpki_client_cache):
+        shutil.rmtree(rpki_client_cache, ignore_errors=True)
+    # Recreate cache directory (required by rpki-client)
+    os.makedirs(rpki_client_cache, exist_ok=True)
+    Log.info(f"Cleared RPKI Client cache: {rpki_client_cache}")
+
+    # Create output directory for rpki-client
+    rpki_client_output = "./my_repo/output"
+    os.makedirs(rpki_client_output, exist_ok=True)
+
     Log.success("\n" + "="*20 + " RUNNING RPKI Client  " + "="*20)
-    rpki_client = "RP/rpki-client -t ./my_repo/tal/ta.tal -d ../local_repo/ -v ./test"
+    print("=== VALIDATOR_START: RPKI Client ===", flush=True)
+
+    rpki_client = "./RP/instruct/rpki-client -t ./mutation/out/my_repo/tal/ta.tal -d ./my_repo/rsync -v ./my_repo/output"
     os.system(rpki_client)
+    sys.stdout.flush()
+    sys.stderr.flush()

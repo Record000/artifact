@@ -36,66 +36,167 @@ prepare_environment() {
     echo ""
 }
 
-# Check required packages in tmp/
-check_required_packages() {
+# Normalize package filenames to match expected patterns (no version)
+normalize_package_names() {
+    local tmp_dir="./tmp"
+    local renamed=0
+
+    echo "Normalizing package filenames..."
+
+    # Function to rename files to standard names without version
+    rename_to_standard() {
+        local pattern="$1"
+        local standard_name="$2"
+        local standard_file="${tmp_dir}/${standard_name}.tar.gz"
+
+        # Skip if standard file already exists
+        if [[ -f "$standard_file" ]]; then
+            return 0
+        fi
+
+        # Find files matching the pattern
+        for file in "${tmp_dir}"/${pattern}*.tar.gz; do
+            # Check if file exists (glob might not match anything)
+            [[ -f "$file" ]] || continue
+
+            local basename=$(basename "$file")
+            # Skip if already has standard name
+            if [[ "$basename" == "${standard_name}.tar.gz" ]]; then
+                return 0
+            fi
+
+            # Rename to standard name
+            mv "$file" "$standard_file"
+            echo "   Renamed: $basename → ${standard_name}.tar.gz"
+            ((renamed++))
+            break  # Only rename first match for each pattern
+        done
+    }
+
+    # Rename packages to standard names (without version)
+    rename_to_standard "go" "go"
+    rename_to_standard "DynamoRIO" "DynamoRIO"
+    rename_to_standard "routinator" "routinator"
+    rename_to_standard "cfrpki" "cfrpki"
+    rename_to_standard "fort" "fort"
+    rename_to_standard "rpki-client" "rpki-client"
+
+    if [ $renamed -eq 0 ]; then
+        echo "   All package names already normalized"
+    else
+        echo "   ✓ Renamed $renamed package(s)"
+    fi
+    echo ""
+}
+
+# Check which packages are missing (returns array of missing package names)
+check_missing_packages() {
     local tmp_dir="./tmp"
     local missing=()
 
-    echo "Checking required packages in ${tmp_dir}/..."
-
     # Check Go
     if ! ls "${tmp_dir}"/go*.tar.gz 2>/dev/null | grep -q .; then
-        missing+=("Go (go*.tar.gz)")
+        missing+=("go")
     fi
 
     # Check DynamoRIO
     if ! ls "${tmp_dir}"/DynamoRIO*.tar.gz 2>/dev/null | grep -q .; then
-        missing+=("DynamoRIO (DynamoRIO*.tar.gz)")
+        missing+=("DynamoRIO")
     fi
 
     # Check Routinator
     if ! ls "${tmp_dir}"/routinator*.tar.gz 2>/dev/null | grep -q .; then
-        missing+=("Routinator (routinator*.tar.gz)")
+        missing+=("routinator")
     fi
 
     # Check FORT Validator
     if ! ls "${tmp_dir}"/fort*.tar.gz 2>/dev/null | grep -q .; then
-        missing+=("FORT (fort*.tar.gz)")
+        missing+=("fort")
     fi
 
     # Check rpki-client
     if ! ls "${tmp_dir}"/rpki-client*.tar.gz 2>/dev/null | grep -q .; then
-        missing+=("rpki-client (rpki-client*.tar.gz)")
+        missing+=("rpki-client")
     fi
 
     # Check OctoRPKI (cfrpki)
     if ! ls "${tmp_dir}"/cfrpki*.tar.gz 2>/dev/null | grep -q .; then
-        missing+=("OctoRPKI (cfrpki*.tar.gz)")
+        missing+=("cfrpki")
     fi
 
+    echo "${missing[@]}"
+}
+
+# Download missing packages
+download_missing_packages() {
+    local tmp_dir="./tmp"
+    local missing=($(check_missing_packages))
+
+    echo "Checking required packages in ${tmp_dir}/..."
+
+    # Define packages with URL and standard filename (no version)
+    declare -A packages=(
+        ["go_url"]="https://go.dev/dl/go1.25.7.linux-amd64.tar.gz"
+        ["go_file"]="go.tar.gz"
+        ["DynamoRIO_url"]="https://github.com/DynamoRIO/dynamorio/releases/download/cronbuild-11.90.20482/DynamoRIO-Linux-11.90.20482.tar.gz"
+        ["DynamoRIO_file"]="DynamoRIO.tar.gz"
+        ["routinator_url"]="https://github.com/NLnetLabs/routinator/archive/refs/tags/v0.15.1.tar.gz"
+        ["routinator_file"]="routinator.tar.gz"
+        ["fort_url"]="https://github.com/NICMx/FORT-validator/releases/download/1.6.7/fort-1.6.7.tar.gz"
+        ["fort_file"]="fort.tar.gz"
+        ["rpki-client_url"]="https://github.com/rpki-client/rpki-client-portable/releases/download/9.6/rpki-client-9.6.tar.gz"
+        ["rpki-client_file"]="rpki-client.tar.gz"
+        ["cfrpki_url"]="https://github.com/cloudflare/cfrpki/archive/refs/tags/v1.5.10.tar.gz"
+        ["cfrpki_file"]="cfrpki.tar.gz"
+    )
+
     if [ ${#missing[@]} -ne 0 ]; then
-        echo "❌ Error: Missing required packages:"
+        echo "⚠️  Missing packages detected:"
         for pkg in "${missing[@]}"; do
             echo "   - $pkg"
         done
         echo ""
-        echo "Please download the required packages to ${tmp_dir}/:"
-        echo ""
-        echo "  cd ${tmp_dir}"
-        echo "  wget https://go.dev/dl/go1.25.7.linux-amd64.tar.gz"
-        echo "  wget https://github.com/DynamoRIO/dynamorio/releases/download/cronbuild-11.90.20482/DynamoRIO-Linux-11.90.20482.tar.gz"
-        echo "  wget https://github.com/NLnetLabs/routinator/archive/refs/tags/v0.15.1.tar.gz"
-        echo "  wget https://github.com/cloudflare/cfrpki/archive/refs/tags/v1.5.10.tar.gz"
-        echo "  wget https://github.com/rpki-client/rpki-client-portable/releases/download/9.6/rpki-client-9.6.tar.gz"
-        echo "  wget https://github.com/NICMx/FORT-validator/releases/download/1.6.7/fort-1.6.7.tar.gz"
-        echo "  cd .."
-        echo ""
-        echo "Note: You can use different versions - the script will auto-detect them."
-        echo ""
-        exit 1
-    fi
+        echo "📥 Automatically downloading missing packages..."
 
-    echo "✓ All required packages found"
+        # Check if wget or curl is available
+        if command -v wget &>/dev/null; then
+            downloader="wget"
+        elif command -v curl &>/dev/null; then
+            downloader="curl"
+        else
+            echo "❌ Error: Neither wget nor curl is available."
+            echo "Please install one of them to proceed with automatic downloads."
+            exit 1
+        fi
+
+        cd "${tmp_dir}"
+
+        for pkg in "${missing[@]}"; do
+            local url="${packages[${pkg}_url]}"
+            local filename="${packages[${pkg}_file]}"
+            echo "   Downloading: $filename"
+
+            if [ "$downloader" = "wget" ]; then
+                wget -q --show-progress -O "$filename" "$url" || {
+                    echo "❌ Failed to download: $filename"
+                    cd ..
+                    exit 1
+                }
+            else
+                curl -L -o "$filename" "$url" || {
+                    echo "❌ Failed to download: $filename"
+                    cd ..
+                    exit 1
+                }
+            fi
+        done
+
+        cd ..
+        echo "✓ All packages downloaded successfully"
+    else
+        echo "✓ All required packages found"
+    fi
+    echo ""
 }
 
 # Detect actual filenames in tmp/
@@ -124,7 +225,8 @@ detect_package_versions() {
 if ! docker image inspect "$IMAGE_NAME" &>/dev/null; then
     echo "Building Docker image: $IMAGE_NAME"
     prepare_environment
-    check_required_packages
+    download_missing_packages
+    normalize_package_names
     detect_package_versions
     docker build -t "$IMAGE_NAME" \
         --build-arg GO_PKG="${GO_PKG}" \

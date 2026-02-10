@@ -28,6 +28,17 @@ if [ -d /opt/rp-validators ] && [ "$(ls -A /opt/rp-validators)" ]; then
     done
 fi
 
+# Verify instrumented validators are available (mounted from host)
+# These are used for FUZZ_METRIC coverage testing and are NOT copied into the image
+if [ -d /workspace/RP/instruct ] && [ "$(ls -A /workspace/RP/instruct 2>/dev/null)" ]; then
+    echo "✓ Found instrumented validators in /workspace/RP/instruct/"
+    ls -la /workspace/RP/instruct/ | head -5
+else
+    echo "⚠️  WARNING: Instrumented validators not found in /workspace/RP/instruct/"
+    echo "   The experiment scripts require these binaries."
+    echo "   Ensure RP/instruct/ directory exists on the host and is mounted."
+fi
+
 # Start rsync service
 if [ -f /etc/rsyncd.conf ]; then
     # Create rsync pid directory
@@ -42,6 +53,14 @@ fi
 if [ -d /workspace ]; then
     chmod -R a+rX /workspace 2>/dev/null || true
     chmod -R a+rw /workspace 2>/dev/null || true
+fi
+
+# Verify DynamoRIO configuration
+if [ -n "$DR_ROOT" ] && [ -d "$DR_ROOT" ]; then
+    echo "✓ DynamoRIO configured at $DR_ROOT"
+else
+    echo "⚠️  WARNING: DynamoRIO may not be properly configured"
+    echo "   DR_ROOT=$DR_ROOT"
 fi
 
 # Execute the command passed to the container
