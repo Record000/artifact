@@ -1,7 +1,4 @@
 #!/bin/bash
-#
-# Convenience script for running batch_diversity_generator.py in parallel
-#
 # Usage examples:
 #   ./run_parallel_batch.sh --runs 5 --threads 3
 #   ./run_parallel_batch.sh --runs 10 --threads 4 --num-repos 500 --timeout 30

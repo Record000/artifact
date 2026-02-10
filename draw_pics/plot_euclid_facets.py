@@ -4,13 +4,12 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from matplotlib.patches import Patch
 
-# 全局字体设置
-plt.rcParams['font.size'] = 28          # 默认字体
-plt.rcParams['axes.titlesize'] = 24     # 子图标题
-plt.rcParams['axes.labelsize'] = 24     # 轴标签
-plt.rcParams['xtick.labelsize'] = 22    # x轴刻度
-plt.rcParams['ytick.labelsize'] = 22    # y轴刻度
-plt.rcParams['legend.fontsize'] = 20    # 图例
+plt.rcParams['font.size'] = 28
+plt.rcParams['axes.titlesize'] = 24
+plt.rcParams['axes.labelsize'] = 24
+plt.rcParams['xtick.labelsize'] = 22
+plt.rcParams['ytick.labelsize'] = 22
+plt.rcParams['legend.fontsize'] = 20
 
 # =========================
 # Hard-coded inputs
@@ -109,12 +108,12 @@ def main():
     # Layout tweaks you asked:
     # 1) Move "Euclid score" closer to x-axis  -> increase y a bit
     # =========================
-    fig.supxlabel("Euclid score", y=0.10, x=0.53)  # (default is often lower; 0.05~0.08 都可微调)
+    fig.supxlabel("Euclid score", y=0.10, x=0.53)
 
     # =========================
     # 2) Move global y-label "jitter" closer to y-axis -> increase x a bit
     # =========================
-    fig.text(0.055, 0.55, "jitter", rotation="vertical", va="center")  # 0.04~0.07 可微调
+    fig.text(0.055, 0.55, "jitter", rotation="vertical", va="center")
 
     # ---- global legend for run colors (run1..run4), top-center but LOWER ----
     legend_handles = [
@@ -124,17 +123,13 @@ def main():
     fig.legend(
         handles=legend_handles,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.97),  # 往下：0.95~0.98 之间调
+        bbox_to_anchor=(0.5, 0.97),
         ncol=4,
         frameon=True,
         title=None,
     )
 
-    # leave room for top legend and left global y-label
     plt.tight_layout(rect=(0.07, 0.08, 0.98, 0.92))
-    #                 ^^^^  ^^^^             ^^^^
-    #                left bottom            top
-    # bottom=0.08 让 supxlabel 更靠近轴；top=0.92 给 legend 留空间
 
     out_path = Path(OUTPUT_PDF)
     fig.savefig(out_path, format="pdf", bbox_inches="tight")

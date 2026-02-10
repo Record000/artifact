@@ -5,43 +5,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
-# 全局字体设置
-plt.rcParams['font.size'] = 28          # 默认字体
-plt.rcParams['axes.titlesize'] = 24     # 子图标题
-plt.rcParams['axes.labelsize'] = 24     # 轴标签
-plt.rcParams['xtick.labelsize'] = 22    # x轴刻度
-plt.rcParams['ytick.labelsize'] = 22    # y轴刻度
-plt.rcParams['legend.fontsize'] = 12    # 图例
+plt.rcParams['font.size'] = 28
+plt.rcParams['axes.titlesize'] = 24
+plt.rcParams['axes.labelsize'] = 24
+plt.rcParams['xtick.labelsize'] = 22
+plt.rcParams['ytick.labelsize'] = 22
+plt.rcParams['legend.fontsize'] = 12
 
-# =========================
-# 1) Hard-coded input paths (edit these)
-#    每个 validator 两个文件：baseline + topo
-# =========================
 DATA_FILES = {
     "FORT": {
-        "topo": "./data/structure/mutate_fort.csv",             # ✅ 你已上传
-        "baseline": "./data/structure/baseline_fort.csv",       # TODO: 改成你的 baseline 文件路径
+        "topo": "./data/structure/mutate_fort.csv",
+        "baseline": "./data/structure/baseline_fort.csv",
     },
     "Routinator": {
-        "topo": "./data/structure/mutate_routinator.csv",       # TODO
-        "baseline": "./data/structure/baseline_routinator.csv", # TODO
+        "topo": "./data/structure/mutate_routinator.csv",
+        "baseline": "./data/structure/baseline_routinator.csv",
     },
     "rpki-client": {
-        "topo": "./data/structure/mutate_rpki-client.csv",      # TODO
-        "baseline": "./data/structure/baseline_rpki-client.csv",# TODO
+        "topo": "./data/structure/mutate_rpki-client.csv",
+        "baseline": "./data/structure/baseline_rpki-client.csv",
     },
     "OctoRPKI": {
-        "topo": "./data/structure/mutate_octorpki.csv",         # TODO
-        "baseline": "./data/structure/baseline_octorpki.csv",   # TODO
+        "topo": "./data/structure/mutate_octorpki.csv",
+        "baseline": "./data/structure/baseline_octorpki.csv",
     },
 }
 
-# 你数据里的列名（你这个 fort 文件里是 BB_Count）
 COL_BBCOUNT = "BB_Count"
 
-# =========================
-# 2) Output: save PDF in the same directory as this script
-# =========================
 def get_script_dir() -> Path:
     try:
         return Path(__file__).resolve().parent
@@ -52,9 +43,6 @@ def get_script_dir() -> Path:
 SCRIPT_DIR = get_script_dir()
 OUT_PDF = SCRIPT_DIR / "bb_count_grouped_box.pdf"
 
-# =========================
-# 3) Plot style (blue vs soft red, gray outliers)
-# =========================
 baseline_fill = "#B8C1FF"
 baseline_edge = "#2E5BFF"
 
@@ -70,7 +58,6 @@ JITTER_SIGMA = 0.035
 JITTER_SIZE = 7
 JITTER_ALPHA = 0.25
 
-# (changed) X-axis order
 VALIDATOR_ORDER = ["Routinator", "rpki-client", "FORT", "OctoRPKI"]
 
 def load_bb_counts(csv_path: str, col_name: str) -> np.ndarray:
@@ -90,7 +77,7 @@ def main():
     base_arrays = []
     topo_arrays = []
 
-    for v in VALIDATOR_ORDER:  # (changed)
+    for v in VALIDATOR_ORDER:
         paths = DATA_FILES.get(v, {})
         base_path = paths.get("baseline", "")
         topo_path = paths.get("topo", "")
@@ -118,7 +105,7 @@ def main():
     # Baseline boxplot
     ax.boxplot(
         base_arrays, positions=pos_b, widths=BOX_WIDTH, patch_artist=True, showfliers=True,
-        boxprops=dict(facecolor=baseline_fill, edgecolor=baseline_edge, linewidth=1.2, alpha=0.75),  # (changed)
+        boxprops=dict(facecolor=baseline_fill, edgecolor=baseline_edge, linewidth=1.2, alpha=0.75),
         whiskerprops=dict(color=baseline_edge, linewidth=1.2),
         capprops=dict(color=baseline_edge, linewidth=1.2),
         medianprops=dict(color="black", linewidth=1.2),
@@ -129,7 +116,7 @@ def main():
     # Topo boxplot
     ax.boxplot(
         topo_arrays, positions=pos_t, widths=BOX_WIDTH, patch_artist=True, showfliers=True,
-        boxprops=dict(facecolor=topo_fill, edgecolor=topo_edge, linewidth=1.2, alpha=0.75),  # (changed)
+        boxprops=dict(facecolor=topo_fill, edgecolor=topo_edge, linewidth=1.2, alpha=0.75),
         whiskerprops=dict(color=topo_edge, linewidth=1.2),
         capprops=dict(color=topo_edge, linewidth=1.2),
         medianprops=dict(color="black", linewidth=1.2),
@@ -153,17 +140,15 @@ def main():
     ax.grid(True, axis="y", alpha=0.25)
 
     legend_handles = [
-        Patch(facecolor=baseline_fill, edgecolor=baseline_edge, alpha=0.75, label="CURE-like (fixed structure)"),  # (changed)
-        Patch(facecolor=topo_fill, edgecolor=topo_edge, alpha=0.75, label="Structure Mutation"),                  # (changed)
+        Patch(facecolor=baseline_fill, edgecolor=baseline_edge, alpha=0.75, label="CURE-like (fixed structure)"),
+        Patch(facecolor=topo_fill, edgecolor=topo_edge, alpha=0.75, label="Structure Mutation"),
     ]
     ax.legend(handles=legend_handles, loc="upper right", frameon=True)
 
     plt.tight_layout()
 
-    # Show before saving
     plt.show()
 
-    # Save as PDF (same dir as this script)
     fig.savefig(OUT_PDF, format="pdf", bbox_inches="tight")
     plt.close(fig)
     print(f"[ok] Saved PDF to: {OUT_PDF}")

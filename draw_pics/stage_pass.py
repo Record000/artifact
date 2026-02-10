@@ -3,17 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 
-# 全局字体设置
-plt.rcParams['font.size'] = 30          # 默认字体
-plt.rcParams['axes.titlesize'] = 30     # 子图标题
-plt.rcParams['axes.labelsize'] = 28     # 轴标签
-plt.rcParams['xtick.labelsize'] = 30    # x轴刻度
-plt.rcParams['ytick.labelsize'] = 30    # y轴刻度
-plt.rcParams['legend.fontsize'] = 30    # 图例
+plt.rcParams['font.size'] = 30
+plt.rcParams['axes.titlesize'] = 30
+plt.rcParams['axes.labelsize'] = 28
+plt.rcParams['xtick.labelsize'] = 30
+plt.rcParams['ytick.labelsize'] = 30
+plt.rcParams['legend.fontsize'] = 30
 
-# -----------------------------
-# Helpers: parse CSV & compute cumulative pass rate
-# -----------------------------
 def find_stage_cols(cols):
     """Find columns for stage_0..stage_5 (case-insensitive, with some fallbacks)."""
     lower = {c.lower(): c for c in cols}
@@ -80,11 +76,8 @@ def compute_cumulative_passrate(csv_path):
     return stage_labels, out
 
 
-# -----------------------------
-# Plot config (unified colors + line styles)
-# -----------------------------
-REPAIR_COLOR = "#009E73"      # teal
-NOREPAIR_COLOR = "#CC79A7"    # purple
+REPAIR_COLOR = "#009E73"
+NOREPAIR_COLOR = "#CC79A7"
 
 def style_for_method(method_name: str):
     n = method_name.lower()
@@ -95,9 +88,6 @@ def style_for_method(method_name: str):
     return dict(linestyle="-", color=None, label=method_name)
 
 
-# -----------------------------
-# Inputs (4 RP validators)
-# -----------------------------
 rps = [
     ("Routinator",  "./data/stage/routinator.csv"),
     ("rpki-client", "./data/stage/rpki-client.csv"),
@@ -105,9 +95,6 @@ rps = [
     ("OctoRPKI",    "./data/stage/octorpki.csv"),
 ]
 
-# -----------------------------
-# 1x4 plotting (4 subplots in a single row)
-# -----------------------------
 fig, axes = plt.subplots(1, 4, figsize=(48, 8), sharex=True, sharey=True)
 axes = axes.flatten()
 
@@ -118,7 +105,6 @@ for idx, (rp_name, path) in enumerate(rps):
     stages, series = compute_cumulative_passrate(path)
     x = np.arange(len(stages))
 
-    # Put repair first if possible
     methods = list(series.keys())
     methods_sorted = sorted(
         methods,
@@ -142,33 +128,26 @@ for idx, (rp_name, path) in enumerate(rps):
         handles.append(line)
         labels.append(st["label"])
 
-    # collect legend from first subplot
     if legend_handles is None:
         legend_handles, legend_labels = handles, labels
 
-    # (1) Title below each subplot, bold
     ax.text(0.5, -0.15, rp_name, transform=ax.transAxes,
             ha="center", va="top", fontweight="bold", fontsize=38)
 
-    # axes / ticks
     ax.set_xticks(x)
     ax.set_xticklabels(stages)
     ax.set_ylim(0, 1.05)
     ax.yaxis.set_major_formatter(PercentFormatter(1.0))
     ax.grid(True, axis="y", linewidth=0.6, alpha=0.35)
 
-    # (3) force tick labels visible for all subplots
     ax.tick_params(axis="x", which="both", labelbottom=True, pad=12)
     ax.tick_params(axis="y", which="both", labelleft=True, pad=12)
 
-# (2) One global y-axis label centered once
 fig.text(0.01, 0.5, "Cumulative pass rate (%)", rotation="vertical", va="center")
 
-# no x-axis label ("Stage") — keep tick labels only
 for ax in axes:
     ax.set_xlabel("")
 
-# (4) Legend with thin frame box
 leg = fig.legend(
     legend_handles, legend_labels,
     frameon=True, fancybox=False,
@@ -176,10 +155,8 @@ leg = fig.legend(
 )
 leg.get_frame().set_linewidth(0.8)
 
-# layout: make room for below-titles and legend (1x4 layout)
 plt.subplots_adjust(left=0.05, right=0.99, top=0.85, bottom=0.18, wspace=0.18)
 
-# save
 plt.savefig("multi_rp_multistage_2x2_adjusted.png", dpi=300, bbox_inches="tight")
 plt.savefig("multi_rp_multistage_2x2_adjusted.pdf", bbox_inches="tight")
 plt.show()

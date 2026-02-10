@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""
-RPKI Repository Structure Mutator (Multi-threaded Producer-Consumer)
 
-This script generates multiple RPKI repository structures with varying
-depth and CA counts while maintaining a fixed total ROA count.
-
-Supports both single-threaded and multi-threaded (producer-consumer) modes
-for improved throughput on multi-core systems.
-
-Author: RFuzz Research Team
-"""
 
 import os
 import sys
@@ -36,10 +26,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from tools.cfg_generator import GeneratorConfig, RPKICFGGenerator
 
-
-# ============================================================================
-# RP Software Configuration
-# ============================================================================
 
 @dataclass
 class RPSoftwareConfig:

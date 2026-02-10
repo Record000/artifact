@@ -1,25 +1,16 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 全局字体设置
-plt.rcParams['font.size'] = 28          # 默认字体
-plt.rcParams['axes.titlesize'] = 24     # 子图标题
-plt.rcParams['axes.labelsize'] = 24     # 轴标签
-plt.rcParams['xtick.labelsize'] = 22    # x轴刻度
-plt.rcParams['ytick.labelsize'] = 22    # y轴刻度
-plt.rcParams['legend.fontsize'] = 20    # 图例
+plt.rcParams['font.size'] = 28
+plt.rcParams['axes.titlesize'] = 24
+plt.rcParams['axes.labelsize'] = 24
+plt.rcParams['xtick.labelsize'] = 22
+plt.rcParams['ytick.labelsize'] = 22
+plt.rcParams['legend.fontsize'] = 20
 
-# ----------------------
-# Input files (CSV)
-# ----------------------
-# mutator_times.csv columns: workers, ours_s, scaffolding_s
-# validator_avgs.csv columns: validator, avg_s
 MUTATOR_CSV = "./data/efficient/mutator_times.csv"
 VALIDATOR_CSV = "./data/efficient/validator_avgs.csv"
 
-# ----------------------
-# Read data
-# ----------------------
 mut_df = pd.read_csv(MUTATOR_CSV)
 val_df = pd.read_csv(VALIDATOR_CSV)
 
@@ -42,16 +33,10 @@ scaffolding_s = mut_df["scaffolding_s"].tolist()
 
 overall_rp_avg = val_df["avg_s"].mean()
 
-# ----------------------
-# Paper-friendly palette (no black, colorblind-friendly)
-# ----------------------
-COLOR_MUT = "#0072B2"      # blue
-COLOR_SCAF = "#D55E00"     # vermillion
-COLOR_RPAVG = "#009E73"    # bluish green
+COLOR_MUT = "#0072B2"
+COLOR_SCAF = "#D55E00"
+COLOR_RPAVG = "#009E73"
 
-# ----------------------
-# Plot (show first, then save as PDF)
-# ----------------------
 fig, ax = plt.subplots(figsize=(11, 6.5))
 
 ax.plot(
@@ -79,7 +64,6 @@ ax.set_xlabel("Mutator workers")
 ax.set_ylabel("Seconds per repository")
 ax.set_xticks(workers)
 
-# Minimal paper-like cosmetics
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 ax.grid(True, axis="y", linestyle=":", linewidth=0.8, alpha=0.6)
@@ -87,10 +71,8 @@ ax.grid(True, axis="y", linestyle=":", linewidth=0.8, alpha=0.6)
 ax.legend()
 fig.tight_layout()
 
-# 1) Show first
 plt.show()
 
-# 2) Save as PDF after showing
 out_pdf = "figA_linechart.pdf"
 fig.savefig(out_pdf)
 
