@@ -25,7 +25,7 @@ Initialize the Docker container for the experiment:
 ./docker-run.sh
 ```
 
-## RQ1 Effectiveness of CFG-guided Mutation
+## RQ1 Effectiveness of Repository-Topology Mutation
 
 **Generating Repositories with Diverse Structures**
 
@@ -72,7 +72,7 @@ Run the `draw_pics/stage_pass.py` script to generate plots using our experimenta
 cd draw_pics && python3 stage_pass.py
 ```
 
-## RQ3 Efficiency of Grammar-Guided and Dependency Repair Mutator
+## RQ3 Efficiency of the Repository-Aware Mutator
 
 **Measuring Validator Parsing Latency**
 
