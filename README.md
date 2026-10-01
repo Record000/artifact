@@ -59,7 +59,7 @@ cd draw_pics && python3 plot_euclid_facets.py
 
 **Measuring Multi-stage Pass Rates before and after Mutation Repair**
 
-Calculating Multi-stage Pass Rates for RepoFuzz
+Calculating Multi-stage Pass Rates for RepoFuzz and CURE
 
 ```shell
 python3 mutation/test_coverage.py --mode <fix/nofix> --run <times>
