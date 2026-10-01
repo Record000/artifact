@@ -226,7 +226,7 @@ message SignatureAlgorithm {
 
 // See RFC 5280, 4.1.1.2.
 message AlgorithmIdentifierSequence {
-  // TODO(dhalawi@google.com):
+  // TODO:
   // encode a correct |AlgorithmIdentifierSequence|.
   optional asn1_pdu.PDU object_identifier = 1;
   optional asn1_pdu.PDU parameters = 2;
