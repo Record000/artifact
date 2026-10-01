@@ -27,21 +27,6 @@ Initialize the Docker container for the experiment:
 
 ## RQ1 Effectiveness of Repository-Topology Mutation
 
-**Generating Repositories with Diverse Structures**
-
-Execute the `run_parallel_batch.sh` script. All results will be output to the `output` directory.
-
-```shell
-./run_parallel_batch.sh 
-```
-
-Run the `draw_pics/plot_euclid_facets.py` script to generate plots using our experimental data.
-
-```shell
-cd draw_pics && python3 plot_euclid_facets.py   
-```
-
-
 **Measuring Basic Block Counts during RPKI Validation across Different Structures**
 
 Run the `repo_structure_mutator.py` script. The results will be exported to the `drcov_output` directory.
@@ -56,14 +41,33 @@ Run the `draw_pics/mutate_structure.py` script to generate plots using our exper
 cd draw_pics && python3 mutate_structure.py
 ```
 
+**Generating Repositories with Diverse Structures**
+
+Execute the `run_parallel_batch.sh` script. All results will be output to the `output` directory.
+
+```shell
+./run_parallel_batch.sh 
+```
+
+Run the `draw_pics/plot_euclid_facets.py` script to generate plots using our experimental data.
+
+```shell
+cd draw_pics && python3 plot_euclid_facets.py   
+```
+
 ## RQ2 Effectiveness of Dependency Repair
 
 **Measuring Multi-stage Pass Rates before and after Mutation Repair**
 
-Run the `mutation/test_coverage.py` script to calculate the pass rates across multiple validation stages.
+Calculating  RepoFuzz Multi-stage Pass Rates.
 
 ```shell
 python3 mutation/test_coverage.py --mode <fix/nofix> --run <times>
+```
+Calculating  CAT Multi-stage Pass Rates.
+```shell
+python3 mutation/cat_mutation/prepare_workspace.py <workspace>
+python3 mutation/cat_mutation/run_campaign.py <workspace> --repos 1000
 ```
 
 Run the `draw_pics/stage_pass.py` script to generate plots using our experimental data.
@@ -101,4 +105,3 @@ Run the `draw_pics/mutator_efficient.py` script to generate plots using our expe
 ```shell
 cd draw_pics && python3 mutator_efficient.py    
 ```
-
