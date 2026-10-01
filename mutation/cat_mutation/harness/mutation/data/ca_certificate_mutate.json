@@ -1,0 +1,120 @@
+{
+  "tbs_certificate": {
+    "version": "v3",
+    "serial_number": 1,
+    "signature": {
+      "algorithm": "sha256_rsa",
+      "parameters": null
+    },
+    "issuer": {
+      "common_name": "9TX4m8v"
+    },
+    "validity": {
+      "not_before": "2024-11-25T05:57:23+00:00",
+      "not_after": "2030-11-25T05:57:23+00:00"
+    },
+    "subject": {
+      "common_name": "9TX4m8v"
+    },
+    "subject_public_key_info": {
+      "algorithm": {
+        "algorithm": "rsa",
+        "parameters": null
+      },
+      "public_key": {
+        "modulus": 26955724851878438244478306846680814074861662640506365715894480117274176163656682238571287480530972771293483513419483033267951443334386926865887976720470088193531370805360815886907128785107532859764846980499290609923247615436488673857435669878315037980107554200517871943182166003663476913860878578722445876262986181070377570952468718172434092724807349479688050012775219860838207084312176995804304507474204327314127492082874533450430018188321586513300506849553796790905403677228581684978838071375907704110509711683184582520858493617279447330951883755349460633952541389795201728862255773459381825490741043088639453194077,
+        "public_exponent": 65537
+      }
+    },
+    "issuer_unique_id": null,
+    "subject_unique_id": null,
+    "extensions": [
+      {
+        "extn_id": "basic_constraints",
+        "critical": true,
+        "extn_value": {
+          "ca": true,
+          "path_len_constraint": null
+        }
+      },
+      {
+        "extn_id": "key_identifier",
+        "critical": false,
+        "extn_value": "85d7cb1c89358e418b7d9bedf3369d73a595b9b2"
+      },
+      {
+        "extn_id": "key_usage",
+        "critical": true,
+        "extn_value": [
+          "key_cert_sign",
+          "crl_sign"
+        ]
+      },
+      {
+        "extn_id": "subject_information_access",
+        "critical": false,
+        "extn_value": [
+          {
+            "access_method": "ca_repository",
+            "access_location": "rsync://localhost:8080/myrpki/9TX4m8v/"
+          },
+          {
+            "access_method": "id-ad-rpkiManifest",
+            "access_location": "rsync://localhost:8080/myrpki/9TX4m8v/manifest.mft"
+          },
+          {
+            "access_method": "id-ad-rpkiNotify",
+            "access_location": "https://rpki.odysseus.uno/rrdp/notification.xml"
+          }
+        ]
+      },
+      {
+        "extn_id": "certificate_policies",
+        "critical": true,
+        "extn_value": [
+          {
+            "policy_identifier": "id-cp-ipAddr-asNumber",
+            "policy_qualifiers": null
+          }
+        ]
+      },
+      {
+        "extn_id": "id-pe-ipAddrBlocks",
+        "critical": true,
+        "extn_value": [
+          {
+            "addressFamily": "IPv4",
+            "ipAddressChoice": [
+              "166.111.0.0/20",
+              "192.168.0.0/20"
+            ]
+          },
+          {
+            "addressFamily": "IPv6",
+            "ipAddressChoice": [
+              "::/8"
+            ]
+          }
+        ]
+      },
+      {
+        "extn_id": "id-pe-autonomousSysIds",
+        "critical": true,
+        "extn_value": {
+          "asnum": [
+            {
+              "min": 0,
+              "max": 4294967295
+            }
+          ],
+          "rdi": null
+        }
+      }
+    ]
+  },
+  "signature_algorithm": {
+    "algorithm": "sha256_rsa",
+    "parameters": null
+  },
+  "signature_value": "7e56d5c7df220e7ec9f691dc1d82a7f9eaf4dac3897e77b5871430bc55e748047c4e4b482ef420e3b49f4972b9611d94a8c449e7efc22528c608eabb5703c954d3c0546493fa296b8620aa0d6f8d36b4592ca2a929989ab2985ab52f7425c0ba643f81089db42f1f19fccc9f4b10f905f66b9090b1df9cf66a436bb1a54d5fcc166149adc595152092ea8f40bece37691a85b3185420ac2e5488f7fe9ccb8f5f0243dc4fd0ee08fd67813f52dc6229b87f071400a015b8d8763f264cc859615099ad631ac7d71a2c948b8a45fec2b821d26ac78a6d05b95222c8b1c595fbd62b67ad364b5aa81342eb0bc44e0a5863396a2eb94fec1707bdab2edc2419d540c7"
+}

@@ -78,13 +78,17 @@ def compute_cumulative_passrate(csv_path):
 
 REPAIR_COLOR = "#009E73"
 NOREPAIR_COLOR = "#CC79A7"
+OURS_COLOR = "blue"  # all added cure_asn1 arms share blue + one legend entry
 
 def style_for_method(method_name: str):
     n = method_name.lower()
+    # our reproduction of the CAT repair rules: blue dotted, own legend entry
+    if n.strip() == "cat repair":
+        return dict(linestyle=":", color=OURS_COLOR, label="CAT")
     if ("w/o" in n) or ("without" in n) or ("no repair" in n) or ("no_repair" in n) or ("norepair" in n):
-        return dict(linestyle="--", color=NOREPAIR_COLOR, label="CURE-like (no repair)")
+        return dict(linestyle="--", color=NOREPAIR_COLOR, label="CURE")
     if "repair" in n:
-        return dict(linestyle="-", color=REPAIR_COLOR, label="With repair")
+        return dict(linestyle="-", color=REPAIR_COLOR, label="RepoFuzz")
     return dict(linestyle="-", color=None, label=method_name)
 
 
@@ -129,7 +133,14 @@ for idx, (rp_name, path) in enumerate(rps):
         labels.append(st["label"])
 
     if legend_handles is None:
-        legend_handles, legend_labels = handles, labels
+        # dedupe by label: the three blue lines share the single "cat repair" entry
+        seen = set()
+        legend_handles, legend_labels = [], []
+        for h, l in zip(handles, labels):
+            if l not in seen:
+                seen.add(l)
+                legend_handles.append(h)
+                legend_labels.append(l)
 
     ax.text(0.5, -0.15, rp_name, transform=ax.transAxes,
             ha="center", va="top", fontweight="bold", fontsize=38)
@@ -151,7 +162,7 @@ for ax in axes:
 leg = fig.legend(
     legend_handles, legend_labels,
     frameon=True, fancybox=False,
-    ncol=2, loc="upper center", bbox_to_anchor=(0.5, 1.01),
+    ncol=3, loc="upper center", bbox_to_anchor=(0.5, 1.01),
 )
 leg.get_frame().set_linewidth(0.8)
 

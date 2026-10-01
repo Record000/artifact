@@ -43,13 +43,13 @@ ax.plot(
     workers, ours_s,
     marker="o", linewidth=5.0, markersize=10,
     color=COLOR_MUT,
-    label="Grammar+Repair Mutator"
+    label="Repository-Aware Mutator"
 )
 ax.plot(
     workers, scaffolding_s,
     marker="s", linewidth=5.0, markersize=10,
     color=COLOR_SCAF,
-    label="Scaffolding (CURE-like)"
+    label="Scaffolding (CURE/CAT-style)"
 )
 
 ax.axhline(

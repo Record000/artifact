@@ -1,0 +1,11 @@
+[package]
+name = "batch_mutator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cure_asn1 = { path = "../vendor/cure_asn1" }
+serde_json = "1"
+
+[profile.release]
+opt-level = 2

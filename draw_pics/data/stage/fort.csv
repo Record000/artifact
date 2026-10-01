@@ -1,3 +1,4 @@
 ,Stage_0,Stage_1,Stage_2,Stage_3,Stage_4,Stage_5
 repair,0,0.105,0,0,0.534,0.362
 w/o repair,0,0.968,0,0,0.032,0
+cat repair,0.0000,0.7150,0.0000,0.0000,0.2510,0.0340

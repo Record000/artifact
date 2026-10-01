@@ -140,8 +140,8 @@ def main():
     ax.grid(True, axis="y", alpha=0.25)
 
     legend_handles = [
-        Patch(facecolor=baseline_fill, edgecolor=baseline_edge, alpha=0.75, label="CURE-like (fixed structure)"),
-        Patch(facecolor=topo_fill, edgecolor=topo_edge, alpha=0.75, label="Structure Mutation"),
+        Patch(facecolor=baseline_fill, edgecolor=baseline_edge, alpha=0.75, label="Fixed Topology"),
+        Patch(facecolor=topo_fill, edgecolor=topo_edge, alpha=0.75, label="Topology Mutation"),
     ]
     ax.legend(handles=legend_handles, loc="upper right", frameon=True)
 
