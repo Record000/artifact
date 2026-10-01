@@ -25,16 +25,15 @@ HARNESS = os.path.dirname(os.path.abspath(__file__))
 RP = os.path.join(HARNESS, "..", "rp_bins")  # copies of artifact/RP/instruct (chmod +x)
 BATCH_MUTATOR = os.path.join(HARNESS, "..", "batch_mutator", "target", "release", "batch_mutator")
 RESULTS = os.path.join(HARNESS, "..", "results")
-# patched routinator needs glibc 2.39: run it via the standalone loader
-LOADER = os.path.join(HARNESS, "..", "glibc239", "root", "usr", "lib64", "ld-linux-x86-64.so.2")
-LOADER_LIBS = os.path.join(HARNESS, "..", "glibc239", "root", "usr", "lib", "x86_64-linux-gnu")
+# Optional standalone loader for older Linux hosts; default uses system glibc.
+LOADER = os.environ.get("CAT_LOADER", "")
+LOADER_LIBS = os.environ.get("CAT_LOADER_LIBS", "")
+ROUTINATOR_PREFIX = ([LOADER, "--library-path", LOADER_LIBS] if LOADER else [])
 
 STAGE_RE = re.compile(r"FUZZ_METRIC: STAGE_(\d)_")
 
 VALIDATORS = {
-    "Routinator": [
-        LOADER,
-        "--library-path", f"{LOADER_LIBS}:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu",
+    "Routinator": ROUTINATOR_PREFIX + [
         f"{RP}/routinator", "-vvvv", "--no-rir-tals",
         "--extra-tals-dir", "./mutation/out/my_repo/tal",
         "-r", "./mutation/out/rp_cache/routinator_cache",
@@ -92,7 +91,7 @@ def clear_caches():
 def run(cmd, timeout):
     env = os.environ.copy()
     # validator runtime libs (same as artifact env_local.sh)
-    libs = "/home/xyf/research/RPKI/local-libs/root/usr/lib/x86_64-linux-gnu"
+    libs = os.environ.get("CAT_LIBRARY_PATH", "")
     env["LD_LIBRARY_PATH"] = libs + (":" + env["LD_LIBRARY_PATH"] if env.get("LD_LIBRARY_PATH") else "")
     try:
         p = subprocess.run(cmd, capture_output=True, timeout=timeout, cwd=HARNESS, env=env)
@@ -129,6 +128,7 @@ def main():
     ap.add_argument("--validators", type=str, default="all", help="comma list or 'all'")
     ap.add_argument("--tag", type=str, default="", help="subdirectory tag for this campaign")
     args = ap.parse_args()
+    os.chdir(HARNESS)
 
     vnames = list(VALIDATORS) if args.validators == "all" else [v.strip() for v in args.validators.split(",")]
     out_root = os.path.join(RESULTS, args.tag) if args.tag else RESULTS
@@ -196,6 +196,9 @@ def main():
                 continue  # mutator crashed (I/O level) -> regenerate
 
             break
+
+        if not gen_ok or mut_ok is False:
+            raise RuntimeError(f"Generation/mutator failed after retries; inspect {repo_dir}")
 
         # post-mutation steps run ONCE, best-effort, outcome recorded as data:
         # no outcome gating or resampling — repairs follow the paper's rules,
